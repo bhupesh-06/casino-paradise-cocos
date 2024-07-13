@@ -142,6 +142,7 @@ if (window.jsb) {
     cc.macro.CLEANUP_IMAGE_CACHE = true;
     window.boot();
 }
+
 function onResize() {
     console.log("check this function");
     var defaultHeight, defaultWidth;
