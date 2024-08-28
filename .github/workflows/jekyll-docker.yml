@@ -1,4 +1,4 @@
-name: Jekyll site CI
+name: Cocos WebGL Build Project
 
 on:
   push:
@@ -18,3 +18,13 @@ jobs:
         docker run \
         -v ${{ github.workspace }}:/srv/jekyll -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
         jekyll/builder:latest /bin/bash -c "chmod -R 777 /srv/jekyll && jekyll build --future"
+
+
+    - name: Push built site to main branch
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git checkout -b gh-pages
+        git add _site
+        git commit -m "Deploy Jekyll site"
+        git push origin gh-pages --force
