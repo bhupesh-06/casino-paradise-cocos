@@ -19,23 +19,41 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Adjust the Node.js version as needed
+          node-version: '20'  # Adjust the Node.js version if needed
 
       # Step 3: Install dependencies
       - name: Install dependencies
-        run: npm ci  # Use npm ci for a clean install
+        run: npm ci  # Use npm ci for a clean install based on package-lock.json
 
       # Step 4: Build the project
       - name: Build the project
-        run: npm run build  # Replace with the appropriate build command for your project
+        run: npm run build:webgl  # Replace with the appropriate build command if different
 
-      # Step 5: Deploy artifacts to the main branch
+      # Step 5: Archive build artifacts
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: build/  # Path to your build output directory
+
+      # Step 6: Check out the main branch
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # Step 7: Download the build artifacts
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      # Step 8: Deploy build artifacts
       - name: Deploy build artifacts
         run: |
+          cp -r build-artifacts/* .  # Copy build artifacts to the root directory
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git checkout main
-          cp -r build/* .  # Replace 'build/*' with the path to your build artifacts
           git add .
           git commit -m "Deploy build artifacts from dev branch"
           git push origin main
